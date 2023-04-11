@@ -66,7 +66,7 @@ double DWIN::getHWVersion(){  //  HEX(5A A5 04 83 00 0F 01)
 
 // Restart DWIN HMI
 void DWIN::restartHMI(){  // HEX(5A A5 07 82 00 04 55 aa 5a a5 )
-    byte sendBuffer[] = {CMD_HEAD1, CMD_HEAD2, 0x06, CMD_WRITE, 0x04, 0x55, 0xaa, CMD_HEAD1, CMD_HEAD2};
+    byte sendBuffer[] = {CMD_HEAD1, CMD_HEAD2, 0x07, CMD_WRITE, 0x04, 0x55, 0xaa, CMD_HEAD1, CMD_HEAD2};
     _dwinSerial->write(sendBuffer, sizeof(sendBuffer)); 
     delay(10);
     readDWIN();
