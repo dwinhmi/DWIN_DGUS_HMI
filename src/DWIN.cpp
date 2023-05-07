@@ -88,7 +88,32 @@ byte DWIN::getBrightness(){
 
 // Chnage Page 
 void DWIN::setPage(byte page){
+    //5A A5 07 82 00 84 5a 01 00 02
     byte sendBuffer[] = {CMD_HEAD1, CMD_HEAD2, 0x07, CMD_WRITE, 0x00, 0x84, 0x5A, 0x01, 0x00, page};
+    _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
+    readDWIN();
+}
+
+// Set Text on VP Address
+void DWIN::setText(long address, String textData){
+
+    int dataLen = textData.length();
+    byte startCMD[] = {CMD_HEAD1, CMD_HEAD2, dataLen+3 , CMD_WRITE, 
+    (address >> 8) & 0xFF, (address) & 0xFF};
+    byte dataCMD[dataLen];textData.getBytes(dataCMD, dataLen+1);
+    byte sendBuffer[6+dataLen];
+
+    memcpy(sendBuffer, startCMD, sizeof(startCMD));
+    memcpy(sendBuffer+6, dataCMD, sizeof(dataCMD));
+
+    _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
+    readDWIN();
+}
+
+// Set Text on VP Address
+void DWIN::setVP(long address, byte data){
+    // 0x5A, 0xA5, 0x05, 0x82, 0x40, 0x20, 0x00, state
+    byte sendBuffer[] = {CMD_HEAD1, CMD_HEAD2, 0x05 , CMD_WRITE, (address >> 8) & 0xFF, (address) & 0xFF, 0x00, data};
     _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
     readDWIN();
 }
@@ -221,8 +246,3 @@ void DWIN::flushSerial(){
   Serial.flush();
   _dwinSerial->flush();
 }
-
-
-
-
-

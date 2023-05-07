@@ -58,14 +58,16 @@ public:
     void restartHMI();
     // set Perticulat Page
     void setPage(byte pageID);
+    // set Text on VP Address
+    void setText(long address, String textData);
+    // set Byte on VP Address
+    void setVP(long address, byte data);
     // get Current Page ID
     byte getPage();
     // set LCD Brightness
     void setBrightness(byte pConstrast);
     // set LCD Brightness
     byte getBrightness();
-
-
     // Callback Function
     typedef void (*hmiListner) (String address, int lastByte, String messege, String response);
 
@@ -100,4 +102,3 @@ private:
 
 
 #endif // DWINT_H
-
