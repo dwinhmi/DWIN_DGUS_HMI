@@ -8,6 +8,8 @@ Supporting Features till date.
 - setBrightness()
 - getBrightness()
 - setVP()
+- setText()
+- beepHMI()
 - listenEvents()
 
 ## Usage

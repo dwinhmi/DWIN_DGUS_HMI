@@ -45,7 +45,6 @@
 
 
 
-
 void DWIN::init(Stream* port, bool isSoft){
     this->_dwinSerial = port;
     this->_isSoft = isSoft;
@@ -66,7 +65,7 @@ double DWIN::getHWVersion(){  //  HEX(5A A5 04 83 00 0F 01)
 
 // Restart DWIN HMI
 void DWIN::restartHMI(){  // HEX(5A A5 07 82 00 04 55 aa 5a a5 )
-    byte sendBuffer[] = {CMD_HEAD1, CMD_HEAD2, 0x07, CMD_WRITE, 0x04, 0x55, 0xaa, CMD_HEAD1, CMD_HEAD2};
+    byte sendBuffer[] = {CMD_HEAD1, CMD_HEAD2, 0x07, CMD_WRITE, 0x00, 0x04, 0x55, 0xaa, CMD_HEAD1, CMD_HEAD2};
     _dwinSerial->write(sendBuffer, sizeof(sendBuffer)); 
     delay(10);
     readDWIN();
@@ -94,6 +93,13 @@ void DWIN::setPage(byte page){
     readDWIN();
 }
 
+// Get Current Page ID
+byte DWIN::getPage(){
+    byte sendBuffer[] = {CMD_HEAD1, CMD_HEAD2, 0x04, CMD_READ, 0x00 , 0x14, 0x01};
+    _dwinSerial->write(sendBuffer, sizeof(sendBuffer)); 
+    return readCMDLastByte();
+}
+
 // Set Text on VP Address
 void DWIN::setText(long address, String textData){
 
@@ -110,7 +116,7 @@ void DWIN::setText(long address, String textData){
     readDWIN();
 }
 
-// Set Text on VP Address
+// Set Data on VP Address
 void DWIN::setVP(long address, byte data){
     // 0x5A, 0xA5, 0x05, 0x82, 0x40, 0x20, 0x00, state
     byte sendBuffer[] = {CMD_HEAD1, CMD_HEAD2, 0x05 , CMD_WRITE, (address >> 8) & 0xFF, (address) & 0xFF, 0x00, data};
@@ -118,12 +124,14 @@ void DWIN::setVP(long address, byte data){
     readDWIN();
 }
 
-// Get Current Page ID
-byte DWIN::getPage(){
-    byte sendBuffer[] = {CMD_HEAD1, CMD_HEAD2, 0x04, CMD_READ, 0x00 , 0x14, 0x01};
-    _dwinSerial->write(sendBuffer, sizeof(sendBuffer)); 
-    return readCMDLastByte();
+// beep Buzzer for 1 Sec
+void DWIN::beepHMI(){
+    // 0x5A, 0xA5, 0x05, 0x82, 0x00, 0xA0, 0x00, 0x7D
+    byte sendBuffer[] = {CMD_HEAD1, CMD_HEAD2, 0x05 , CMD_WRITE, 0x00, 0xA0, 0x00, 0x7D};
+    _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
+    readDWIN();
 }
+
 
 // SET CallBack Event
 void DWIN::hmiCallBack(hmiListner callBack){
