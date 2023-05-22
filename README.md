@@ -13,13 +13,13 @@ Supporting Features till date.
 - listenEvents()
 
 ## Usage
-Download the Libarary and extract the folder in the libraries of Arduino IDE
+Download the Library and extract the folder in the libraries of Arduino IDE
 #### Include DWIN Library (eg. DWIN.h) 
 ```C++
 #include <DWIN.h>
 ```
 
-#### Initialize the hmi Object with Rx | Tx Pins and Buard rate
+#### Initialize the hmi Object with Rx | Tx Pins and Baud rate
 ```C++
 // If Using ESP32 Or Arduino Mega 
 #if defined(ESP32)
@@ -34,8 +34,8 @@ Download the Libarary and extract the folder in the libraries of Arduino IDE
 #### Define callback Function
 ```C++
 // Event Occurs when response comes from HMI
-void onHMIEvent(String address, int lastByte, String messege, String response){  
-  Serial.println("OnEvent : [ A : " + address + " | D : "+ String(lastByte, HEX)+ " | M : "+messege+" | R : "+response+ " ]"); 
+void onHMIEvent(String address, int lastByte, String message, String response){  
+  Serial.println("OnEvent : [ A : " + address + " | D : "+ String(lastByte, HEX)+ " | M : "+message+" | R : "+response+ " ]"); 
   if (address == "1002"){
   // Take your custom action call
   }

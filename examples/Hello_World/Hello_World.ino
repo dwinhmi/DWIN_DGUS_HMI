@@ -3,11 +3,11 @@
  * -----------------------------------------------------------------------------------------
  * DWIN Hello World Sketch   | Author : Tejeet ( tejdwin@gmail.com )
  * -----------------------------------------------------------------------------------------
- * This is DWIN HMI Libabry for Arduino Compatible Boards. More Info about Display Visit
- * Officail Site --> https://www.dwin-global.com/
+ * This is DWIN HMI Library for Arduino Compatible Boards. More Info about Display Visit
+ * Official Site --> https://www.dwin-global.com/
  * 
  * Example sketch/program showing how to initialize DWIN Hmi with Arduino Or ESP32 Boards
- * In this example we can see on setup loop we change the page no and set the brighness &
+ * In this example we can see on setup loop we change the page no and set the brightness &
  * Listen to display Events from serial port
  * 
  * DWIN HMI to Various Boards Pinout Connection
@@ -45,8 +45,8 @@
 #endif
 
 // Event Occurs when response comes from HMI
-void onHMIEvent(String address, int lastByte, String messege, String response){  
-  Serial.println("OnEvent : [ A : " + address + " | D : "+ String(lastByte, HEX)+ " | M : "+messege+" | R : "+response+ " ]"); 
+void onHMIEvent(String address, int lastByte, String message, String response){  
+  Serial.println("OnEvent : [ A : " + address + " | D : "+ String(lastByte, HEX)+ " | M : "+message+" | R : "+response+ " ]"); 
   if (address == "1002"){
   // Take your custom action call
   }

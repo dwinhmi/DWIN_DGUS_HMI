@@ -72,8 +72,8 @@ void DWIN::restartHMI(){  // HEX(5A A5 07 82 00 04 55 aa 5a a5 )
 }
 
 // SET DWIN Brightness
-void DWIN::setBrightness(byte brigtness){
-    byte sendBuffer[] = {CMD_HEAD1, CMD_HEAD2, 0x04, CMD_WRITE, 0x00, 0x82, brigtness };
+void DWIN::setBrightness(byte brightness){
+    byte sendBuffer[] = {CMD_HEAD1, CMD_HEAD2, 0x04, CMD_WRITE, 0x00, 0x82, brightness };
     _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
     readDWIN();
 }
@@ -85,7 +85,7 @@ byte DWIN::getBrightness(){
     return readCMDLastByte();
 }
 
-// Chnage Page 
+// Change Page 
 void DWIN::setPage(byte page){
     //5A A5 07 82 00 84 5a 01 00 02
     byte sendBuffer[] = {CMD_HEAD1, CMD_HEAD2, 0x07, CMD_WRITE, 0x00, 0x84, 0x5A, 0x01, 0x00, page};
@@ -134,8 +134,8 @@ void DWIN::beepHMI(){
 
 
 // SET CallBack Event
-void DWIN::hmiCallBack(hmiListner callBack){
-    listnerCallback = callBack;
+void DWIN::hmiCallBack(hmiListener callBack){
+    listenerCallback = callBack;
 }
 
 // Listen For incoming callback  event from HMI
@@ -178,9 +178,9 @@ String DWIN::handle(){
     int lastByte;
     String response;
     String address;
-    String messege;
+    String message;
     bool isSubstr = false;
-    bool messegeEnd = true;
+    bool messageEnd = true;
     bool isFirstByte = false;
     unsigned long startTime = millis(); 
   
@@ -203,13 +203,13 @@ String DWIN::handle(){
                     continue;
                 }
                 else{
-                    if(messegeEnd){
+                    if(messageEnd){
                         if (isSubstr && inByte != MAX_ASCII && inByte > MIN_ASCII){
-                            messege += char(inByte);
+                            message += char(inByte);
                         }
                         else{
                             if(inByte == MAX_ASCII){
-                                messegeEnd = false;
+                                messageEnd = false;
                             }
                             isSubstr = true;
                         }
@@ -221,10 +221,10 @@ String DWIN::handle(){
     }
 
     if (isFirstByte &&_echo){
-        Serial.println("Address : " + address + " | Data : " + String(lastByte, HEX) + " | Messge : " + messege + " | Response " +response );
+        Serial.println("Address : " + address + " | Data : " + String(lastByte, HEX) + " | Message : " + message + " | Response " +response );
     }
     if (isFirstByte){
-        listnerCallback(address, lastByte, messege, response);
+        listenerCallback(address, lastByte, message, response);
     }
     return response;
 }
