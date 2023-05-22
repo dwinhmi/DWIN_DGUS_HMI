@@ -1,5 +1,5 @@
 /*
-* DWIN DGUS DWIN Libabry for Arduino Uno | ESP32 
+* DWIN DGUS DWIN Library for Arduino Uno | ESP32 
 * This Library Supports all Basic Function
 * Created by Tejeet ( tejeet@dwin.com.cn ) 
 * Please Checkout Latest Offerings FROM DWIN 
@@ -50,13 +50,13 @@ public:
     // PUBLIC Methods
 
     void echoEnabled(bool enabled);
-    // Listen Touch Events & Messeges from HMI
+    // Listen Touch Events & Messages from HMI
     void listen();
     // Get Version
     double getHWVersion();
     // restart HMI
     void restartHMI();
-    // set Perticulat Page
+    // set Particular Page
     void setPage(byte pageID);
     // get Current Page ID
     byte getPage();
@@ -71,10 +71,10 @@ public:
     // beep Buzzer for 1 sec
     void beepHMI();
     // Callback Function
-    typedef void (*hmiListner) (String address, int lastByte, String messege, String response);
+    typedef void (*hmiListener) (String address, int lastByte, String message, String response);
 
     // CallBack Method
-    void hmiCallBack(hmiListner callBackFunction);
+    void hmiCallBack(hmiListener callBackFunction);
 
 
 private:
@@ -90,7 +90,7 @@ private:
     bool _isConnected;     // Flag set on successful communication
 
     bool cbfunc_valid;
-    hmiListner listnerCallback;
+    hmiListener listenerCallback;
 
     void init(Stream* port, bool isSoft); 
     byte readCMDLastByte();
@@ -103,4 +103,4 @@ private:
 
 
 
-#endif // DWINT_H
+#endif // DWIN_H
