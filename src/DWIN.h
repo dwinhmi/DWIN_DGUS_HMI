@@ -6,6 +6,14 @@
 * Here : https://www.dwin-global.com/
 */
 
+/*
+ * Modified by Rtek1000
+ * - Added CRC (when submitting the order *): (Modbus with swapped bytes)
+ * - - (*): beepHMI_crc(time) [default time: 0x7D]
+ * - Need CRC lib: https://github.com/RobTillaart/CRC
+ * - Need to program the display using SD card with T5LCFG.CFG and 'CRC: ON'
+ * - CRC is error control, to improve communication reliability
+ */
 
 #ifndef DWIN_H
 #define DWIN_H
@@ -16,16 +24,13 @@
     #include "WProgram.h"
 #endif
 
-
 #ifndef ESP32
     #include <SoftwareSerial.h>
 #endif
 
-
 #define DWIN_DEFAULT_BAUD_RATE      115200
 #define ARDUINO_RX_PIN              10
 #define ARDUINO_TX_PIN              11
-
 
 class DWIN{
 
@@ -46,9 +51,7 @@ public:
     DWIN(uint8_t rx=ARDUINO_RX_PIN, uint8_t tx=ARDUINO_TX_PIN, long baud=DWIN_DEFAULT_BAUD_RATE);
     #endif
 
-
     // PUBLIC Methods
-
     void echoEnabled(bool enabled);
     // Listen Touch Events & Messages from HMI
     void listen();
@@ -70,12 +73,13 @@ public:
     void setVP(long address, byte data);
     // beep Buzzer for 1 sec
     void beepHMI();
+    // beep Buzzer for 1 sec or time value (0x00-0xFF) (send order using CRC)
+    void beepHMI_crc(uint8_t time = 0x7D);
     // Callback Function
     typedef void (*hmiListener) (String address, int lastByte, String message, String response);
 
     // CallBack Method
     void hmiCallBack(hmiListener callBackFunction);
-
 
 private:
 
@@ -100,7 +104,5 @@ private:
     void flushSerial();
 
 };
-
-
 
 #endif // DWIN_H
