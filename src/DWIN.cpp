@@ -1,5 +1,30 @@
+/*
+* DWIN DGUS DWIN Library for Arduino Uno | ESP32 
+* This Library Supports all Basic Function
+* Created by Tejeet ( tejeet@dwin.com.cn ) 
+* Please Checkout Latest Offerings FROM DWIN 
+* Here : https://www.dwin-global.com/
+*/
+
+/*
+ * Modified by Rtek1000 (Mar 04, 2024)
+ * - Added CRC (when submitting the order *): (Modbus with swapped bytes)
+ * - - (*): beepHMI_crc(time) [default time: 0x7D]
+ * - Need CRC lib: https://github.com/RobTillaart/CRC
+ * - Need to program the display using SD card with T5LCFG.CFG and 'CRC: ON'
+ * - CRC is error control, to improve communication reliability
+ */
+ 
 #include "DWIN.h"
 #include <stdio.h>
+
+#include <CRC16.h>
+
+CRC16 crc(CRC16_MODBUS_POLYNOME,
+          CRC16_MODBUS_INITIAL,
+          CRC16_MODBUS_XOR_OUT,
+          CRC16_MODBUS_REV_IN,
+          CRC16_MODBUS_REV_OUT);
 
 #define CMD_HEAD1           0x5A
 #define CMD_HEAD2           0xA5
@@ -12,6 +37,7 @@
 #define CMD_READ_TIMEOUT    50
 #define READ_TIMEOUT        100
 
+#define MAXLENGTH 250
 
 #if defined(ESP32)
     DWIN::DWIN(HardwareSerial& port, uint8_t receivePin, uint8_t transmitPin, long baud){
@@ -43,7 +69,7 @@
 
 #endif
 
-
+static bool calcCRC(uint8_t *array, bool only_check);
 
 void DWIN::init(Stream* port, bool isSoft){
     this->_dwinSerial = port;
@@ -106,7 +132,8 @@ void DWIN::setText(long address, String textData){
     int dataLen = textData.length();
     byte startCMD[] = {CMD_HEAD1, CMD_HEAD2, dataLen+3 , CMD_WRITE, 
     (address >> 8) & 0xFF, (address) & 0xFF};
-    byte dataCMD[dataLen];textData.getBytes(dataCMD, dataLen+1);
+    byte dataCMD[dataLen];
+    textData.getBytes(dataCMD, dataLen+1);
     byte sendBuffer[6+dataLen];
 
     memcpy(sendBuffer, startCMD, sizeof(startCMD));
@@ -132,6 +159,52 @@ void DWIN::beepHMI(){
     readDWIN();
 }
 
+// beep Buzzer for x Sec (send order using CRC)
+void DWIN::beepHMI_crc(uint8_t time){
+    // 0x5A, 0xA5, 0x07, 0x82, 0x00, 0xA0, 0x00, TIME, CRC0, CRC1
+    byte sendBuffer[] = {CMD_HEAD1, CMD_HEAD2, 0x07 , CMD_WRITE, 0x00, 0xA0, 0x00, time, 0x00, 0x00};
+    
+    calcCRC(sendBuffer, false);
+    
+    _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
+    readDWIN();
+}
+
+static bool calcCRC(uint8_t *array, bool only_check) {
+  //CRC16_restart();
+  crc.restart();
+
+  uint8_t length = array[2] + 1;  //   is used enough to spend a local variable on the length
+
+  //  check if length is valid.
+  if ((length < 4) || (length > MAXLENGTH)) {
+    return false;
+  }
+
+  for (int i = 3; i < length; i++) {
+    //CRC16_add(array[i]);
+    crc.add(array[i]);
+  }
+
+  //uint16_t res = CRC16_calc();
+  //uint8_t res0 = res >> 8;
+  //uint8_t res1 = res;
+
+  uint16_t res = crc.calc();
+  uint8_t res0 = res;
+  uint8_t res1 = res >> 8;
+
+  if ((array[length] == res0) && (array[length + 1] == res1)) {
+    return true;
+  }
+
+  if (only_check == false) {
+    array[length] = res0;
+    array[length + 1] = res1;
+  }
+
+  return false;
+}
 
 // SET CallBack Event
 void DWIN::hmiCallBack(hmiListener callBack){
