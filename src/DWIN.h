@@ -7,7 +7,7 @@
 */
 
 /*
- * Modified by Rtek1000
+ * Modified by Rtek1000 (Mar 04, 2024)
  * - Added CRC (when submitting the order *): (Modbus with swapped bytes)
  * - - (*): beepHMI_crc(time) [default time: 0x7D]
  * - Need CRC lib: https://github.com/RobTillaart/CRC
