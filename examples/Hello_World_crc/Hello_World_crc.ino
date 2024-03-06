@@ -32,6 +32,7 @@
  * - Need CRC lib: https://github.com/RobTillaart/CRC
  * - Need to program the display using SD card with T5LCFG.CFG and 'CRC: ON'
  * - CRC is error control, to improve communication reliability
+ * - - Thanks: RobTillaart from GitHub
  */
 
 #include <Arduino.h>
