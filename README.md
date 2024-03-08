@@ -14,7 +14,7 @@ Supporting Features till date.
 
 ----
 
-  Description and Additional Functions (send order without CRC):
+  ## Description and Additional Functions (send order without CRC):
   
   - Enable Response Command Show:
   - - echoEnabled()
@@ -55,7 +55,7 @@ Supporting Features till date.
   - Set CRC on for UART2 (send order without CRC and wait-for-GUI-status-free)
   - - enableCRC():
 
-  Description and Additional Functions (send order with CRC):
+  ## Description and Additional Functions (send order with CRC):
   - Restart HMI:
   - - restartHMI_crc()
   - Get Version:
