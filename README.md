@@ -43,8 +43,6 @@ Supporting Features till date.
   - - restartHMI()
   - Set Particular Page:
   - - setPage()
-  - Set Particular Page:
-  - - setPage_crc()
   - Get Current Page ID:
   - - getPage()
   - Set LCD Brightness:
@@ -83,7 +81,7 @@ Supporting Features till date.
   - - getPage_crc()
   - Set LCD Brightness and sleep timer:
   - - setBrightness_crc()
-  - Set LCD Brightness:
+  - Get LCD Brightness:
   - - getBrightness_crc()
   - Set Data on VP Address:
   - - setText_crc()
