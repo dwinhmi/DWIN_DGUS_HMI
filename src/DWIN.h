@@ -123,7 +123,7 @@ public:
   // set Data on VP Address (send order using CRC)
   bool setText_crc(long address, String textData);
 
-  // Icon Display (from 48.ICL file library) on VP Address of 'Basic Graphic' item (send order using CRC)
+  // Icon Display (from *.ICL file library) on VP Address of 'Basic Graphic' item (send order using CRC)
   bool iconDisplay_crc(long address, uint8_t lib_icon, int x, int y, int icon);
 
   // Set DGUS_SERIAL UART baudrate 9600
