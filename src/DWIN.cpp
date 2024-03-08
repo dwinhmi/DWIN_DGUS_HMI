@@ -817,7 +817,7 @@ String DWIN::readDWIN() {
     if (_dwinSerial->available() > 0) {
       int c = _dwinSerial->read();
       
-      if (c <= 9) {
+      if (c <= 0x0F) {
         resp.concat(" 0" + String(c, HEX));
       } else {
         resp.concat(" " + String(c, HEX));
@@ -878,7 +878,7 @@ bool DWIN::readDWIN_array(byte *c_buffer, int16_t c_size) {
 }
 
 String DWIN::checkHex(byte currentNo) {
-  if (currentNo < 10) {
+  if (currentNo <= 0x0F) {
     return "0" + String(currentNo, HEX);
   }
   return String(currentNo, HEX);
@@ -1060,7 +1060,7 @@ static void print_data(byte *data, int size) {
   Serial.print("Data sent --> ");
   
   for (int i = 0; i < size; i++) {
-    if (data[i] <= 9) Serial.print('0');
+    if (data[i] <= 0x0F) Serial.print('0');
     
     Serial.print(data[i], HEX);
     
