@@ -27,16 +27,6 @@ Supporting Features till date.
   - - void listen()
   
   ## Description and Additional Functions (send order without CRC):
-  - Enable Response Command Show:
-  - - echoEnabled()
-  - Enable Send Command Show:
-  - - echoSendEnabled()
-  - Enable Wait for the GUI to be free before sending the new Order (<300ms):
-  - - waitGUIenabled()
-  - Enable response checking for sent command:
-  - - checkResponseEnabled()
-  - Listen Touch Events & Messages from HMI:
-  - - listen()
   - Get Version:
   - - getHWVersion()
   - Restart HMI:
@@ -63,10 +53,10 @@ Supporting Features till date.
   - - enableCRC()
 
   ## Description and Additional Functions (send order with CRC):
-  - Restart HMI:
-  - - restartHMI_crc()
   - Get Version:
   - - getHWVersion_crc()
+  - Restart HMI:
+  - - restartHMI_crc()
   - Get GUI-status:
   - - getGUIstatus_crc()
   - Wait for GUI-status Free:
