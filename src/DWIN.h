@@ -82,45 +82,45 @@ public:
   // Wait for GUI-status Free (send order using CRC)
   bool waitGUIstatusFree_crc(uint16_t timeout = 500);
 
-  // restart HMI
+  // Restart HMI
   void restartHMI();
-  // restart HMI (send order using CRC)
+  // Restart HMI (send order using CRC)
   bool restartHMI_crc(bool wait_to_restart = true);
 
-  // set CRC on for UART2 (send order without CRC and wait-for-GUI-status-free)
+  // Set CRC on for UART2 (send order without CRC and wait-for-GUI-status-free)
   bool enableCRC();
-  // set CRC off for UART2 (send order using CRC)
+  // Set CRC off for UART2 (send order using CRC)
   bool disableCRC();
 
-  // set Touchscreen - TP operation simulation (send order using CRC)
+  // Set Touchscreen - TP operation simulation (send order using CRC)
   bool setTouchscreen_crc(uint8_t mode, uint16_t pos_x, uint16_t pos_y);
 
-  // set Particular Page (send order using CRC)
+  // Set Particular Page (send order using CRC)
   bool setRTC_crc(byte year, byte month, byte day, byte week, byte hour, byte minute, byte second);
   
-  // set Particular Page
+  // Set Particular Page
   void setPage(byte pageID);
-  // set Particular Page (send order using CRC)
+  // Set Particular Page (send order using CRC)
   bool setPage_crc(byte pageID);
 
-  // get Current Page ID
+  // Get Current Page ID
   byte getPage();
-  // get Current Page ID (send order using CRC)
+  // Get Current Page ID (send order using CRC)
   int8_t getPage_crc();
 
-  // set LCD Brightness
+  // Set LCD Brightness
   void setBrightness(byte pConstrast);
-  // set LCD Brightness and Sleep timer (send order using CRC)
+  // Set LCD Brightness and Sleep timer (send order using CRC)
   bool setBrightness_crc(byte pConstrast_on = 0x64, byte pConstrast_off = 0x32, uint16_t sleep_timer = 1500);
   
-  // set LCD Brightness
+  // Get LCD Brightness
   byte getBrightness();
-  // set LCD Brightness (send order using CRC)
+  // Get LCD Brightness (send order using CRC)
   int8_t getBrightness_crc();
 
-  // set Data on VP Address
+  // Set Data (8-bit) on VP Address
   void setText(long address, String textData);
-  // set Data on VP Address (send order using CRC)
+  // Set Data (8-bit) on VP Address (send order using CRC)
   bool setText_crc(long address, String textData);
 
   // Icon Display (from *.ICL file library) on VP Address of 'Basic Graphic' item (send order using CRC)
@@ -138,18 +138,18 @@ public:
   // Set UART baudrate 115200 (send order using CRC)
   bool setBaudrate_115200_crc();
 
-  // set Byte on VP Address
+  // Set Byte on VP Address
   void setVP(long address, uint16_t data);
-  // set Byte on VP Address (send order using CRC)
+  // Set Byte on VP Address (send order using CRC)
   bool setVP_crc(long address, uint16_t data);
 
-  // set Multiple and Sequential Words (16-bit) on VP Address (send order using CRC)
+  // Set Multiple and Sequential Words (16-bit) on VP Address (send order using CRC)
   // Similar to writing text, this Words sending function can be useful for updating icon variables (Var Icon).
   bool setMultSeqVP_crc(long address, uint16_t *data, int data_size);
 
-  // beep Buzzer for 1 sec
+  // Beep Buzzer for 1 sec
   void beepHMI();
-  // beep Buzzer for 1 sec or time value (0x00-0xFF) (send order using CRC)
+  // Beep Buzzer for 1 sec or time value (0x00-0xFF) (send order using CRC)
   bool beepHMI_crc(uint8_t time = 0x7D);
 
   // Callback Function
