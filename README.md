@@ -39,13 +39,13 @@ Supporting Features till date.
   - - setBrightness()
   - Get LCD Brightness:
   - - getBrightness()
-  - Set Data on VP Address:
+  - Set Data (8-bit) on VP Address:
   - - setText()
   - Set DGUS_SERIAL UART baudrate 9600:
   - - setDsBaudrate_9600()
   - Set DGUS_SERIAL UART baudrate 115200:
   - - setDsBaudrate_115200()
-  - Set Byte on VP Address:
+  - Set Word (16-bit) on VP Address:
   - - setVP()
   - Beep Buzzer for 1 sec:
   - - beepHMI()
@@ -73,7 +73,7 @@ Supporting Features till date.
   - - setBrightness_crc()
   - Get LCD Brightness:
   - - getBrightness_crc()
-  - Set Data on VP Address:
+  - Set Data (16-bit) on VP Address:
   - - setText_crc()
   - Icon Display (from *.ICL file library) on VP Address of 'Basic Graphic' item:
   - - iconDisplay_crc()
@@ -81,7 +81,7 @@ Supporting Features till date.
   - - setBaudrate_9600_crc()
   - Set UART baudrate 115200:
   - - setBaudrate_115200_crc()
-  - Set Byte on VP Address:
+  - Set Word (16-bit) on VP Address:
   - - setVP_crc()
   - Set Multiple and Sequential Words (16-bit) on VP address:
   - - setMultSeqVP_crc()
