@@ -280,7 +280,7 @@ void DWIN_HMI_restart() {
 }
 
 void print_DWIN_HMI_log(String msg1, String msg2, bool send_ln) {
-#ifdef PRINT_MSG == 1
+#if PRINT_MSG == 1
   Serial.print(F("\nDWIN HMI ~ "));
   Serial.print(msg1);
   Serial.print(msg2);
