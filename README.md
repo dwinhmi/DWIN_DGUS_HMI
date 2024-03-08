@@ -64,7 +64,7 @@ Supporting Features till date.
   - Beep Buzzer for 1 sec:
   - - beepHMI()
   - Set CRC on for UART2 (send order without CRC and wait-for-GUI-status-free)
-  - - enableCRC():
+  - - enableCRC()
 
   ## Description and Additional Functions (send order with CRC):
   - Restart HMI:
@@ -98,7 +98,7 @@ Supporting Features till date.
   - Set Multiple and Sequential Words (16-bit) on VP address:
   - - setMultSeqVP_crc()
   - Beep Buzzer for 1 sec or time value (0x00-0xFF):
-  - - beepHMI_crc():
+  - - beepHMI_crc()
 
 ----
 
