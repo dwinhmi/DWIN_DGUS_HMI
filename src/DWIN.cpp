@@ -44,8 +44,6 @@ CRC16 crc(CRC16_MODBUS_POLYNOME,
 uint8_t DGUS_SERIAL_ID = 0;
 
 #if defined(ESP32)
-HardwareSerial* DGUS_port;
-
 DWIN::DWIN(HardwareSerial &port, uint8_t receivePin, uint8_t transmitPin, long baud) {
   DGUS_port = &port;
   port.begin(baud, SERIAL_8N1, receivePin, transmitPin);
@@ -53,11 +51,9 @@ DWIN::DWIN(HardwareSerial &port, uint8_t receivePin, uint8_t transmitPin, long b
 }
 
 #elif defined(ESP8266)
-SoftwareSerial* DGUS_port;
-
 DWIN::DWIN(uint8_t receivePin, uint8_t transmitPin, long baud) {
   localSWserial = new SoftwareSerial(receivePin, transmitPin);
-  DGUS_port = &localSWserial;
+  DGUS_port = localSWserial;
   
   localSWserial->begin(baud);
   init((Stream *)localSWserial, true);
@@ -68,24 +64,19 @@ DWIN::DWIN(SoftwareSerial &port, long baud) {
   port.begin(baud);
   init((Stream *)&port, true);
 }
-DWIN::DWIN(Stream &port, long baud) {
-  DGUS_port = &port;
-  
+DWIN::DWIN(Stream &port, long baud) { 
   init(&port, true);
 }
 
 #else
-SoftwareSerial* DGUS_port;
-
 DWIN::DWIN(uint8_t rx, uint8_t tx, long baud) {
   localSWserial = new SoftwareSerial(rx, tx);
-  DGUS_port = &localSWserial;
+  DGUS_port = localSWserial;
   
   localSWserial->begin(baud);
   _baud = baud;
   init((Stream *)localSWserial, true);
 }
-
 #endif
 
 void DWIN::init(Stream *port, bool isSoft) {
@@ -497,11 +488,12 @@ bool DWIN::setText_crc(long address, String textData) {
 }
 
 // Icon Display (from 48.ICL file library) on VP Address of 'Basic Graphic' item (send order using CRC)
-bool DWIN::iconDisplay_crc(long address, int x, int y, int i) {
-  //hh-hh 11 82 aa-aa 30-07 00-01 xx-xx yy-yy ii-ii FF-00 cc-cc
+bool DWIN::iconDisplay_crc(long address, uint8_t lib_icon, int x, int y, int icon) {
+  //hh-hh 11 82 aa-aa LL-07 00-01 xx-xx yy-yy ii-ii FF-00 cc-cc
   //
   //hh-hh: CMD_HEAD1, CMD_HEAD2
   //aa-aa: address (VP)
+  //LL: Icon library (48.ICL)
   //xx-xx: x (x position)
   //yy-yy: y (y position)
   //ii-ii: i (icon ID)
@@ -509,10 +501,10 @@ bool DWIN::iconDisplay_crc(long address, int x, int y, int i) {
   
   byte sendBuffer[] = { CMD_HEAD1, CMD_HEAD2, 0x11, CMD_WRITE,
                         (byte)((address >> 8) & 0xFF), (byte)((address)&0xFF),
-                        0x30, 0x07, 0x00, 0x01,
+                        lib_icon, 0x07, 0x00, 0x01,
                         (byte)((x >> 8) & 0xFF), (byte)((x)&0xFF),
                         (byte)((y >> 8) & 0xFF), (byte)((y)&0xFF),
-                        (byte)((i >> 8) & 0xFF), (byte)((i)&0xFF),
+                        (byte)((icon >> 8) & 0xFF), (byte)((icon)&0xFF),
                         0xFF, 0x00, 0x00, 0x00 };
                         
   calcCRC(sendBuffer, sizeof(sendBuffer), false);
@@ -592,22 +584,22 @@ bool DWIN::setBaudrate_115200_crc() {
 }
 
 // Set Data on VP Address
-void DWIN::setVP(long address, byte data) {
+void DWIN::setVP(long address, uint16_t data) {
   // 0x5A, 0xA5, 0x05, 0x82, 0x40, 0x20, 0x00, state
   byte sendBuffer[] = { CMD_HEAD1, CMD_HEAD2, 0x05, CMD_WRITE,
                         (byte)((address >> 8) & 0xFF), (byte)((address) & 0xFF),
-                        0x00, data };
+                        (byte)((data >> 8) & 0xFF), (byte)((data) & 0xFF) };
                         
   _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
   readDWIN();
 }
 
 // Set Data on VP Address (send order using CRC)
-bool DWIN::setVP_crc(long address, byte data) {
+bool DWIN::setVP_crc(long address, uint16_t data) {
   // 0x5A, 0xA5, 0x07, 0x82, 0x40, 0x20, 0x00, state, 0x00, 0x00
   byte sendBuffer[] = { CMD_HEAD1, CMD_HEAD2, 0x07, CMD_WRITE,
                         (byte)((address >> 8) & 0xFF), (byte)((address) & 0xFF),
-                        0x00, data, 0x00, 0x00 };
+                        (byte)((data >> 8) & 0xFF), (byte)((data) & 0xFF), 0x00, 0x00 };
 
   calcCRC(sendBuffer, sizeof(sendBuffer), false);
   
@@ -880,7 +872,18 @@ bool DWIN::calcCRC(uint8_t *array, uint16_t array_size, bool only_check) {
   // some protections for bad coding
   if ((length < 4) || (length > MAXLENGTH) || (length > (array_size - 2))) {
     if (_echo) {
-      Serial.println(F("\ncalcCRC() Error: incorrect length"));
+      if (length < 4) {
+        Serial.println(F("\ncalcCRC() Error: incorrect length (length < 4)"));
+      }
+      if (length > MAXLENGTH) {
+        Serial.println(F("\ncalcCRC() Error: incorrect length (length > MAXLENGTH)"));
+      }
+      if (length > (array_size - 2)) {
+        Serial.println(F("\ncalcCRC() Error: incorrect length (length > (array_size - 2))"));
+      }
+      if (only_check == true) {
+        Serial.println(F("\n(calcCRC() in only check mode; check serial port connection failure)"));
+      }
     }
         
     return false;
