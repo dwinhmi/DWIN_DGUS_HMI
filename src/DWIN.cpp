@@ -43,6 +43,9 @@ CRC16 crc(CRC16_MODBUS_POLYNOME,
 
 uint8_t DGUS_SERIAL_ID = 0;
 
+// Helper for writing functions
+static void print_data(byte *data, int size);
+
 #if defined(ESP32)
 DWIN::DWIN(HardwareSerial &port, uint8_t receivePin, uint8_t transmitPin, long baud) {
   DGUS_port = &port;
@@ -458,12 +461,13 @@ void DWIN::setText(long address, String textData) {
 
 // Set Text on VP Address (send order using CRC)
 bool DWIN::setText_crc(long address, String textData) {
-  // Reference: 5aa5 06 83 20 00 30 cc-cc
+  // Reference: 5aa5 06 82 20 00 30 cc-cc
 
   int dataLen = textData.length();
   
   byte startCMD[] = { CMD_HEAD1, CMD_HEAD2, (byte)(dataLen + 5), CMD_WRITE,
                       (byte)((address >> 8) & 0xFF), (byte)((address) & 0xFF) };
+                      
   byte dataCMD[dataLen + 2]; // Include CRC
 
   textData.getBytes(dataCMD, dataLen + 1);
@@ -596,7 +600,7 @@ void DWIN::setVP(long address, uint16_t data) {
 
 // Set Data on VP Address (send order using CRC)
 bool DWIN::setVP_crc(long address, uint16_t data) {
-  // 0x5A, 0xA5, 0x07, 0x82, 0x40, 0x20, 0x00, state, 0x00, 0x00
+  // CMD_HEAD1, CMD_HEAD2, lentgh, CMD_WRITE, address, address, state, state, crc, crc
   byte sendBuffer[] = { CMD_HEAD1, CMD_HEAD2, 0x07, CMD_WRITE,
                         (byte)((address >> 8) & 0xFF), (byte)((address) & 0xFF),
                         (byte)((data >> 8) & 0xFF), (byte)((data) & 0xFF), 0x00, 0x00 };
@@ -612,6 +616,56 @@ bool DWIN::setVP_crc(long address, uint16_t data) {
   } else {
     readDWIN();
   }
+
+  return false;
+}
+      
+// set Multiple and Sequential Words (16-bit) on VP Address (send order using CRC)
+// Similar to writing text, this Words sending function can be useful for updating icon variables (Var Icon).
+bool DWIN::setMultSeqVP_crc(long address, uint16_t *data, int data_size) {
+  // CMD_HEAD1, CMD_HEAD2, lentgh, CMD_WRITE, address, address, state, state, crc, crc
+
+  int dataLen = data_size * 2;
+  
+  byte startCMD[] = { CMD_HEAD1, CMD_HEAD2, (byte)(dataLen + 5), CMD_WRITE,
+                      (byte)((address >> 8) & 0xFF), (byte)((address) & 0xFF) };
+
+  int startCMD_size = sizeof(startCMD);
+
+  byte dataCMD[dataLen + 2] = {0}; // Include CRC: 2 bytes (16-bit)
+  
+  int dataCMD_size = sizeof(dataCMD);
+  
+  uint16_t index = 0;
+  
+  // Convert 16-bit data to 8-bit data
+  for (uint16_t i = 0; i < dataCMD_size; i++) {
+      dataCMD[index] = (byte)((data[i] >> 8) & 0xFF);
+      dataCMD[index + 1] = (byte)((data[i]) & 0xFF);
+      
+      index += 2;
+  }
+
+  byte sendBuffer[startCMD_size + dataCMD_size];
+  
+  int sendBuffer_size = sizeof(sendBuffer);
+
+  memcpy(sendBuffer, startCMD, startCMD_size);
+  memcpy(sendBuffer + startCMD_size, dataCMD, dataCMD_size);
+
+  calcCRC(sendBuffer, sendBuffer_size, false);
+
+  waitGUIstatusFree_crc();
+
+  _dwinSerial->write(sendBuffer, sendBuffer_size);
+  
+  print_data(sendBuffer, sendBuffer_size);
+
+//  if (_verify) {
+//    return verifyResponse_4F4B_crc();
+//  } else {
+    readDWIN();
+//  }
 
   return false;
 }
@@ -907,4 +961,18 @@ bool DWIN::calcCRC(uint8_t *array, uint16_t array_size, bool only_check) {
   }
 
   return false;
+}
+
+static void print_data(byte *data, int size) {
+  Serial.print("Data sent --> ");
+  
+  for (int i = 0; i < size; i++) {
+    if (data[i] <= 9) Serial.print('0');
+    
+    Serial.print(data[i], HEX);
+    
+    Serial.print(' ');
+  }
+    
+  Serial.println();
 }
