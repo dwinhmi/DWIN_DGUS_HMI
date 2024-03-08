@@ -140,6 +140,10 @@ public:
   // set Byte on VP Address (send order using CRC)
   bool setVP_crc(long address, uint16_t data);
 
+  // set Multiple and Sequential Words (16-bit) on VP Address (send order using CRC)
+  // Similar to writing text, this Words sending function can be useful for updating icon variables (Var Icon).
+  bool setMultSeqVP_crc(long address, uint16_t *data, int data_size);
+
   // beep Buzzer for 1 sec
   void beepHMI();
   // beep Buzzer for 1 sec or time value (0x00-0xFF) (send order using CRC)
