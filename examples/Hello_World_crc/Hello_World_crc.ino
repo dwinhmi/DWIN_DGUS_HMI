@@ -154,6 +154,14 @@ void init1() {
   DWIN_HMI_get_brightness();
 }
 
+// There may also be a lack of encoding compatibility,
+// and the characters will not be displayed correctly.
+// - For example, when selecting the UNICODE encoding type,
+// the microcontroller must send 2 bytes to write each character on the display.
+// - If the program only uses basic (Western) characters 0x00~0x7F,
+// try using GBK encoding, and you can only send 1 byte to write each character.
+
+
 void DWIN_HMI_set_text(long address, String textData) {
   for (uint8_t j = 0; j < 3; j++) {  // Try executing the command 3 times
     if (hmi.setText_crc(address, textData) == false) {
