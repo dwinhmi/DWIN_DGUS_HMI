@@ -37,7 +37,7 @@ Supporting Features till date.
   - - getPage()
   - Set LCD Brightness:
   - - setBrightness()
-  - Set LCD Brightness:
+  - Get LCD Brightness:
   - - getBrightness()
   - Set Data on VP Address:
   - - setText()
