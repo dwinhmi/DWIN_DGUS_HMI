@@ -23,9 +23,9 @@ Supporting Features till date.
   - listen(): Listen Touch Events & Messages from HMI
   - getHWVersion(): Get Version
   - restartHMI(): restart HMI
-  - restartHMI_crc(bool wait_to_restart = true): restart HMI (send order using CRC)
+  - restartHMI_crc(): restart HMI (send order using CRC)
   - setPage(): set Particular Page
-  - setPage_crc(byte pageID): set Particular Page (send order using CRC)
+  - setPage_crc(): set Particular Page (send order using CRC)
   - getPage(): get Current Page ID
   - setBrightness(): set LCD Brightness
   - getBrightness(): set LCD Brightness
