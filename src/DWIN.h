@@ -110,7 +110,7 @@ public:
 
   // set LCD Brightness
   void setBrightness(byte pConstrast);
-  // set LCD Brightness (send order using CRC)
+  // set LCD Brightness and Sleep timer (send order using CRC)
   bool setBrightness_crc(byte pConstrast_on = 0x64, byte pConstrast_off = 0x32, uint16_t sleep_timer = 1500);
   
   // set LCD Brightness
