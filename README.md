@@ -13,9 +13,20 @@ Supporting Features till date.
 - listenEvents()
 
 ----
-
-  ## Description and Additional Functions (send order without CRC):
+  ## Description and Additional Functions:
   
+  - Enable Response Command Show:
+  - - echoEnabled()
+  - Enable Send Command Show:
+  - - echoSendEnabled()
+  - Enable Wait for the GUI to be free before sending the new Order (<300ms):
+  - - waitGUIenabled()
+  - Enable response checking for sent command:
+  - - checkResponseEnabled()
+  - Listen Touch Events & Messages from HMI:
+  - - void listen()
+  
+  ## Description and Additional Functions (send order without CRC):
   - Enable Response Command Show:
   - - echoEnabled()
   - Enable Send Command Show:
