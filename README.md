@@ -51,8 +51,6 @@ Supporting Features till date.
   - - setBrightness()
   - Set LCD Brightness:
   - - getBrightness()
-  - Set LCD Brightness (send order using CRC)
-  - - getBrightness_crc()
   - Set Data on VP Address:
   - - setText()
   - Set DGUS_SERIAL UART baudrate 9600:
@@ -85,6 +83,8 @@ Supporting Features till date.
   - - getPage_crc()
   - Set LCD Brightness and sleep timer:
   - - setBrightness_crc()
+  - Set LCD Brightness:
+  - - getBrightness_crc()
   - Set Data on VP Address:
   - - setText_crc()
   - Icon Display (from *.ICL file library) on VP Address of 'Basic Graphic' item:
