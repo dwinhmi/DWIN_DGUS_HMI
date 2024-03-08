@@ -73,7 +73,7 @@ Supporting Features till date.
   - - setBrightness_crc()
   - Get LCD Brightness:
   - - getBrightness_crc()
-  - Set Data (16-bit) on VP Address:
+  - Set Data (8-bit) on VP Address:
   - - setText_crc()
   - Icon Display (from *.ICL file library) on VP Address of 'Basic Graphic' item:
   - - iconDisplay_crc()
