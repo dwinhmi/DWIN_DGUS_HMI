@@ -131,7 +131,8 @@ void init1() {
   // make 1 beep
   DWIN_HMI_beep();
 
-  DWIN_HMI_icon_display();
+  // Display an Icon (from 48.ICL file library) on VP Address of 'Basic Graphic' item
+  DWIN_HMI_icon_display(0x1000, 48, 0, 0, 425);
 
   DWIN_HMI_set_rtc(24, 3, 6, 3, 12, 0, 0);
 
@@ -254,11 +255,10 @@ void DWIN_HMI_beep() {
   }
 }
 
-void DWIN_HMI_icon_display() {
+void DWIN_HMI_icon_display(long addr, uint8_t icon_lib, int x, int y, int icon) {
   for (uint8_t i = 0; i < 3; i++) {  // Try executing the command 3 times
-
-    // Display an Icon (from 48.ICL file library) on VP Address of 'Basic Graphic' item
-    if (hmi.iconDisplay_crc(0x1000, 0, 0, 425) == false) {
+    // Display an Icon (from xx.ICL file library: icon_lib) on VP Address of 'Basic Graphic' item
+    if (hmi.iconDisplay_crc(addr, icon_lib, x, y, icon) == false) {
       print_DWIN_HMI_log(F("Icon Display: error - bad response"), "", true);
     } else {
       print_DWIN_HMI_log(F("Icon Display: done"), "", true);
