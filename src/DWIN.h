@@ -59,6 +59,9 @@ public:
   // Enable Response Command Show
   void echoEnabled(bool enabled);
   
+  // Enable Send Command Show
+  void echoSendEnabled(bool echoSendEnabled);
+  
   // Enable Wait for the GUI to be free before sending the new Order (<300ms)
   void waitGUIenabled(bool waitEnabled);
   
@@ -168,6 +171,7 @@ private:
   bool _isSoft = false;         // Is serial interface software
   long _baud = 0;               // DWIN HMI Baud rate
   bool _echo = false;           // Response Command Show
+  bool _echoSend = false;       // Send Command Show
   bool _debug = false;          // Response Charactes Show
   bool _isConnected = false;    // Flag set on successful communication
   bool _wait = false;           // Flag Wait for the GUI to be free before sending the new Order (<300ms)
