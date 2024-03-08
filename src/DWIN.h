@@ -121,7 +121,7 @@ public:
   bool setText_crc(long address, String textData);
 
   // Icon Display (from 48.ICL file library) on VP Address of 'Basic Graphic' item (send order using CRC)
-  bool iconDisplay_crc(long address, int x, int y, int icon);
+  bool iconDisplay_crc(long address, int lib_icon, int x, int y, int icon);
 
   // Set DGUS_SERIAL UART baudrate 9600
   void setDsBaudrate_9600();
@@ -136,9 +136,9 @@ public:
   bool setBaudrate_115200_crc();
 
   // set Byte on VP Address
-  void setVP(long address, byte data);
+  void setVP(long address, uint16_t data);
   // set Byte on VP Address (send order using CRC)
-  bool setVP_crc(long address, byte data);
+  bool setVP_crc(long address, uint16_t data);
 
   // beep Buzzer for 1 sec
   void beepHMI();
@@ -153,8 +153,11 @@ public:
 
 private:
 
-#ifndef ESP32
+#if defined(ESP32)
+  HardwareSerial* DGUS_port;
+#else
   SoftwareSerial* localSWserial = nullptr;
+  SoftwareSerial* DGUS_port = nullptr;
 #endif
 
   Stream* _dwinSerial;          // DWIN Serial interface
