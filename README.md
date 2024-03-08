@@ -22,40 +22,72 @@ Supporting Features till date.
   - - echoSendEnabled()
   - Enable Wait for the GUI to be free before sending the new Order (<300ms):
   - - waitGUIenabled()
-  - checkResponseEnabled(): Enable response checking for sent command
-  - listen(): Listen Touch Events & Messages from HMI
-  - getHWVersion(): Get Version
-  - restartHMI(): restart HMI
-  - restartHMI_crc(): restart HMI (send order using CRC)
-  - setPage(): set Particular Page
-  - setPage_crc(): set Particular Page (send order using CRC)
-  - getPage(): get Current Page ID
-  - setBrightness(): set LCD Brightness
-  - getBrightness(): set LCD Brightness
-  - getBrightness_crc(): set LCD Brightness (send order using CRC)
-  - setText(): set Data on VP Address
-  - setDsBaudrate_9600(): Set DGUS_SERIAL UART baudrate 9600
-  - setDsBaudrate_115200(): Set DGUS_SERIAL UART baudrate 115200
-  - setVP(): set Byte on VP Address
-  - beepHMI(): beep Buzzer for 1 sec
-  - enableCRC(): set CRC on for UART2 (send order without CRC and wait-for-GUI-status-free)
+  - Enable response checking for sent command:
+  - - checkResponseEnabled()
+  - Listen Touch Events & Messages from HMI:
+  - - listen()
+  - Get Version:
+  - - getHWVersion()
+  - Restart HMI:
+  - - restartHMI()
+  - Set Particular Page:
+  - - setPage()
+  - Set Particular Page:
+  - - setPage_crc()
+  - Get Current Page ID:
+  - - getPage()
+  - Set LCD Brightness:
+  - - setBrightness()
+  - Set LCD Brightness:
+  - - getBrightness()
+  - Set LCD Brightness (send order using CRC)
+  - - getBrightness_crc()
+  - Set Data on VP Address:
+  - - setText()
+  - Set DGUS_SERIAL UART baudrate 9600:
+  - - setDsBaudrate_9600()
+  - Set DGUS_SERIAL UART baudrate 115200:
+  - - setDsBaudrate_115200()
+  - Set Byte on VP Address:
+  - - setVP()
+  - Beep Buzzer for 1 sec:
+  - - beepHMI()
+  - Set CRC on for UART2 (send order without CRC and wait-for-GUI-status-free)
+  - - enableCRC():
 
   Description and Additional Functions (send order with CRC):
-  - getHWVersion_crc(): Get Version (send order using CRC)
-  - getGUIstatus_crc(): Get GUI-status (send order using CRC)
-  - waitGUIstatusFree_crc(): Wait for GUI-status Free (send order using CRC)
-  - disableCRC(): set CRC off for UART2 (send order using CRC)
-  - setTouchscreen_crc(): set Touchscreen - TP operation simulation (send order using CRC)
-  - setRTC_crc(): set Particular Page (send order using CRC)
-  - getPage_crc(): get Current Page ID (send order using CRC)
-  - setBrightness_crc(): set LCD Brightness and sleep timer (send order using CRC)
-  - setText_crc(): set Data on VP Address (send order using CRC)
-  - iconDisplay_crc(): Icon Display (from 48.ICL file library) on VP Address of 'Basic Graphic' item (send order using CRC)
-  - setBaudrate_9600_crc(): Set UART baudrate 9600 (send order using CRC)
-  - setBaudrate_115200_crc(): Set UART baudrate 115200 (send order using CRC)
-  - setVP_crc(): set Byte on VP Address (send order using CRC)
-  - setMultSeqVP_crc(): set Multiple and Sequential Words (16-bit) on VP Address (send order using CRC)
-  - beepHMI_crc(): beep Buzzer for 1 sec or time value (0x00-0xFF) (send order using CRC)
+  - Restart HMI:
+  - - restartHMI_crc()
+  - Get Version:
+  - - getHWVersion_crc()
+  - Get GUI-status:
+  - - getGUIstatus_crc()
+  - Wait for GUI-status Free:
+  - - waitGUIstatusFree_crc()
+  - Set CRC off for UART2:
+  - - disableCRC()
+  - Set Touchscreen - TP operation simulation:
+  - - setTouchscreen_crc()
+  - Set Particular Page:
+  - - setRTC_crc()
+  - Get Current Page ID:
+  - - getPage_crc()
+  - Set LCD Brightness and sleep timer:
+  - - setBrightness_crc()
+  - Set Data on VP Address:
+  - - setText_crc()
+  - Icon Display (from *.ICL file library) on VP Address of 'Basic Graphic' item:
+  - - iconDisplay_crc()
+  - Set UART baudrate 9600:
+  - - setBaudrate_9600_crc()
+  - Set UART baudrate 115200:
+  - - setBaudrate_115200_crc()
+  - Set Byte on VP Address:
+  - - setVP_crc()
+  - Set Multiple and Sequential Words (16-bit) on VP address:
+  - - setMultSeqVP_crc()
+  - Beep Buzzer for 1 sec or time value (0x00-0xFF):
+  - - beepHMI_crc():
 
 ----
 
