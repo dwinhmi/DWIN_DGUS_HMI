@@ -92,6 +92,11 @@ void DWIN::echoEnabled(bool echoEnabled) {
   _echo = echoEnabled;
 }
 
+// Enable Send Command Show
+void DWIN::echoSendEnabled(bool echoSendEnabled) {
+  _echoSend = echoSendEnabled;
+}
+
 // Enable Wait for the GUI to be free before sending the new Order (<300ms)
 void DWIN::waitGUIenabled(bool waitEnabled) {
   _wait = waitEnabled;
@@ -106,6 +111,7 @@ void DWIN::checkResponseEnabled(bool verifEnabled) {
 double DWIN::getHWVersion() {  //  HEX(5A A5 04 83 00 0F 01)
   byte sendBuffer[] = { CMD_HEAD1, CMD_HEAD2, 0x04, CMD_READ, 0x00, 0x0F, 0x01 };
   _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
+  
   delay(10);
   return readCMDLastByte();
 }
@@ -119,7 +125,12 @@ double DWIN::getHWVersion_crc() {  //  HEX(5A A5 06 83 00 0F 01 xx xx)
   waitGUIstatusFree_crc();
 
   _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
-  delay(10);
+  // delay(10);
+  
+  if (_echoSend) {
+    print_data(sendBuffer, sizeof(sendBuffer));
+  }
+  
   readDWIN();
   return 0; //readCMDLastByte();
 }
@@ -131,7 +142,11 @@ bool DWIN::getGUIstatus_crc() {  // HEX(5A A5 06 83 0015 01 xx xx)
   calcCRC(sendBuffer, sizeof(sendBuffer), false);
   
   _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
-  //delay(10);
+  // delay(10);
+  
+  if (_echoSend) {
+    print_data(sendBuffer, sizeof(sendBuffer));
+  }
   
   // 5a a5 08 83 00 15 01 00 00 4a 24
   const byte respConstBuff[] = { CMD_HEAD1, CMD_HEAD2, 0x08, CMD_READ, 0x00, 0x15, 0x01, 0x00, 0x00, 0x4A, 0x24 };
@@ -187,7 +202,12 @@ bool DWIN::restartHMI_crc(bool wait_to_restart) {  // HEX(5A A5 09 82 00 04 55 a
 
   _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
   
-  //delay(10);
+  // delay(10);
+  
+  if (_echoSend) {
+    print_data(sendBuffer, sizeof(sendBuffer));
+  }
+  
   if (_verify) {
     verif_resp = verifyResponse_4F4B_crc();
   } else {
@@ -232,7 +252,11 @@ bool DWIN::setBrightness_crc(byte brightness_on, byte brightness_off, uint16_t s
 
   _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
 
-//  delay(10);
+  // delay(10);
+  
+  if (_echoSend) {
+    print_data(sendBuffer, sizeof(sendBuffer));
+  }
 
   if (_verify) {
     return verifyResponse_4F4B_crc();
@@ -260,6 +284,12 @@ int8_t DWIN::getBrightness_crc() {
 
   _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
   
+  // delay(10);
+  
+  if (_echoSend) {
+    print_data(sendBuffer, sizeof(sendBuffer));
+  }
+  
   // Reference: 5a a5 08 83 00 31 01 5a '05' ba 77
   byte respBuffer[] = { CMD_HEAD1, CMD_HEAD2, 0x08, CMD_READ, 0x00, 0x31, 0x01, 0x5A, 0x05, 0xBA, 0x77 };
   
@@ -276,6 +306,13 @@ bool DWIN::enableCRC() {
   byte sendBuffer[] = { CMD_HEAD1, CMD_HEAD2, 0x05, CMD_WRITE, 0x00, 0x0C, 0x5A, 0x80 };
 
   _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
+
+  // delay(10);
+  
+  if (_echoSend) {
+    print_data(sendBuffer, sizeof(sendBuffer));
+  }
+  
   if (_verify) {
     return verifyResponse_4F4B();
   } else {
@@ -294,6 +331,10 @@ bool DWIN::disableCRC() {
 
   _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
   // delay(10);
+  
+  if (_echoSend) {
+    print_data(sendBuffer, sizeof(sendBuffer));
+  }
   
   if (_verify) {
     return verifyResponse_4F4B_crc();
@@ -331,6 +372,10 @@ bool DWIN::setTouchscreen_crc(uint8_t mode, uint16_t pos_x, uint16_t pos_y) {
   
   _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
   // delay(10);
+  
+  if (_echoSend) {
+    print_data(sendBuffer, sizeof(sendBuffer));
+  }
   
   if (_verify) {
     return verifyResponse_4F4B_crc();
@@ -374,7 +419,11 @@ bool DWIN::setRTC_crc(byte year, byte month, byte day, byte week, byte hour, byt
   waitGUIstatusFree_crc();
   
   _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
-   delay(10);
+  // delay(10);
+  
+  if (_echoSend) {
+    print_data(sendBuffer, sizeof(sendBuffer));
+  }
   
   if (_verify) {
     return verifyResponse_4F4B_crc();
@@ -404,7 +453,11 @@ bool DWIN::setPage_crc(byte pageID) {
 
   _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
 
-  //  delay(10);
+  // delay(10);
+  
+  if (_echoSend) {
+    print_data(sendBuffer, sizeof(sendBuffer));
+  }
   
   if (_verify) {
     return verifyResponse_4F4B_crc();
@@ -431,6 +484,12 @@ int8_t DWIN::getPage_crc() {
   waitGUIstatusFree_crc();
 
   _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
+
+  // delay(10);
+  
+  if (_echoSend) {
+    print_data(sendBuffer, sizeof(sendBuffer));
+  }
 
   // Reference: 5a a5 08 83 00 14 01 00 '00' 4b d8
   byte respBuffer[] = { CMD_HEAD1, CMD_HEAD2, 0x08, CMD_READ, 0x00, 0x14, 0x01, 0x00, 0x00, 0x4B, 0xD8 };
@@ -482,6 +541,12 @@ bool DWIN::setText_crc(long address, String textData) {
 
   _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
 
+  // delay(10);
+  
+  if (_echoSend) {
+    print_data(sendBuffer, sizeof(sendBuffer));
+  }
+  
   if (_verify) {
     return verifyResponse_4F4B_crc();
   } else {
@@ -517,7 +582,11 @@ bool DWIN::iconDisplay_crc(long address, uint8_t lib_icon, int x, int y, int ico
 
   _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
   
-//  delay(10);
+  // delay(10);
+  
+  if (_echoSend) {
+    print_data(sendBuffer, sizeof(sendBuffer));
+  }
   
   if (_verify) {
     return verifyResponse_4F4B_crc();
@@ -554,7 +623,11 @@ bool DWIN::setBaudrate_9600_crc() {
 
   _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
 
-  //  delay(10);
+  // delay(10);
+  
+  if (_echoSend) {
+    print_data(sendBuffer, sizeof(sendBuffer));
+  }
   
   if (_verify) {
     return verifyResponse_4F4B_crc();
@@ -576,7 +649,11 @@ bool DWIN::setBaudrate_115200_crc() {
 
   _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
 
-  //  delay(10);
+  // delay(10);
+  
+  if (_echoSend) {
+    print_data(sendBuffer, sizeof(sendBuffer));
+  }
   
   if (_verify) {
     return verifyResponse_4F4B_crc();
@@ -611,6 +688,12 @@ bool DWIN::setVP_crc(long address, uint16_t data) {
 
   _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
 
+  // delay(10);
+  
+  if (_echoSend) {
+    print_data(sendBuffer, sizeof(sendBuffer));
+  }
+  
   if (_verify) {
     return verifyResponse_4F4B_crc();
   } else {
@@ -659,13 +742,17 @@ bool DWIN::setMultSeqVP_crc(long address, uint16_t *data, int data_size) {
 
   _dwinSerial->write(sendBuffer, sendBuffer_size);
   
-  print_data(sendBuffer, sendBuffer_size);
+  // delay(10);
+  
+  if (_echoSend) {
+    print_data(sendBuffer, sendBuffer_size);
+  }
 
-//  if (_verify) {
-//    return verifyResponse_4F4B_crc();
-//  } else {
+  if (_verify) {
+    return verifyResponse_4F4B_crc();
+  } else {
     readDWIN();
-//  }
+  }
 
   return false;
 }
@@ -688,6 +775,12 @@ bool DWIN::beepHMI_crc(uint8_t time) {
   waitGUIstatusFree_crc();
 
   _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
+
+  // delay(10);
+  
+  if (_echoSend) {
+    print_data(sendBuffer, sizeof(sendBuffer));
+  }
   
   if (_verify) {
     return verifyResponse_4F4B_crc();
