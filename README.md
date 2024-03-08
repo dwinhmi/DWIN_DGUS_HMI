@@ -16,12 +16,12 @@ Supporting Features till date.
 
   Description and Additional Functions (send order without CRC):
   
-  - echoEnabled():
-  - - Enable Response Command Show
-  - echoSendEnabled():
-  - - Enable Send Command Show
-  - waitGUIenabled():
-  - - Enable Wait for the GUI to be free before sending the new Order (<300ms)
+  - Enable Response Command Show
+  - - echoEnabled()
+  - Enable Send Command Show
+  - - echoSendEnabled()
+  - Enable Wait for the GUI to be free before sending the new Order (<300ms)
+  - - waitGUIenabled()
   - checkResponseEnabled(): Enable response checking for sent command
   - listen(): Listen Touch Events & Messages from HMI
   - getHWVersion(): Get Version
