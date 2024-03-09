@@ -146,9 +146,15 @@ public:
   // Set Byte on VP Address (send order using CRC)
   bool setVP_crc(long address, uint16_t data);
 
+  // Get Byte on VP Address (send order using CRC)
+  int32_t getVP_crc(long address);
+  
   // Set Multiple and Sequential Words (16-bit) on VP Address (send order using CRC)
   // Similar to writing text, this Words sending function can be useful for updating icon variables (Var Icon).
   bool setMultSeqVP_crc(long address, uint16_t *data, int data_size);
+
+  // Get Multiple and Sequential Words (16-bit) on VP Address (send order using CRC)
+  bool getMultSeqVP_crc(long address, byte data_size, uint16_t *data);
 
   // Beep Buzzer for 1 sec
   void beepHMI();
@@ -196,6 +202,7 @@ private:
   bool verifyResponse_4F4B();
   bool verifyResponse_4F4B_crc();
   bool calcCRC(uint8_t *array, uint16_t array_size, bool only_check);
+  void print_data(byte *data, int size, bool is_send = true); // Helper for writing functions
 };
 
 #endif  // DWIN_H
