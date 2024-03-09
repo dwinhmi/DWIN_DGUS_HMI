@@ -163,13 +163,28 @@ bool DWIN::getGUIstatus_crc() {  // HEX(5A A5 06 83 0015 01 xx xx)
   return true;
 }
 
+// Set timeout for Wait for GUI-status Free
+void DWIN::setTimeout_waitGUI(uint16_t timeout, bool enabled) {
+  if (enabled) {
+    _force_all_waitGUI_Timeout = true;
+  } else {
+    _force_all_waitGUI_Timeout = false;
+    
+    _waitGUI_Timeout = timeout;
+  }
+}
+
 // Wait for GUI-status Free (send order using CRC)
 bool DWIN::waitGUIstatusFree_crc(uint16_t timeout) {
   if (_wait) {
     unsigned long startTime = millis();  // Start time for Timeout
 
-    while (((millis() - startTime) < timeout)) {
-      if (getGUIstatus_crc()) {
+  if (_force_all_waitGUI_Timeout) {    
+    timeout = _waitGUI_Timeout;
+  }
+
+  while (((millis() - startTime) < timeout)) {
+    if (getGUIstatus_crc()) {
         return true;
       }
     }
@@ -435,17 +450,20 @@ bool DWIN::setRTC_crc(byte year, byte month, byte day, byte week, byte hour, byt
 }
 
 // Change Page
-void DWIN::setPage(byte pageID) {
+void DWIN::setPage(uint16_t pageID) {
   //5A A5 07 82 00 84 5a 01 00 02
-  byte sendBuffer[] = { CMD_HEAD1, CMD_HEAD2, 0x07, CMD_WRITE, 0x00, 0x84, 0x5A, 0x01, 0x00, pageID };
+  byte sendBuffer[] = { CMD_HEAD1, CMD_HEAD2, 0x07, CMD_WRITE, 0x00, 0x84, 0x5A, 0x01, 
+                        (byte)((pageID >> 8) & 0xFF), (byte)((pageID) & 0xFF) };
   _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
   readDWIN();
 }
 
 // Change Page (send order using CRC)
-bool DWIN::setPage_crc(byte pageID) {
+bool DWIN::setPage_crc(uint16_t pageID) {
   //5A A5 09 82 00 84 5a 01 00 02 XX XX
-  byte sendBuffer[] = { CMD_HEAD1, CMD_HEAD2, 0x09, CMD_WRITE, 0x00, 0x84, 0x5A, 0x01, 0x00, pageID, 0x00, 0x00 };
+  byte sendBuffer[] = { CMD_HEAD1, CMD_HEAD2, 0x09, CMD_WRITE, 0x00, 0x84, 0x5A, 0x01, 
+                        (byte)((pageID >> 8) & 0xFF), (byte)((pageID) & 0xFF), 
+                        0x00, 0x00 };
 
   calcCRC(sendBuffer, sizeof(sendBuffer), false);
   
