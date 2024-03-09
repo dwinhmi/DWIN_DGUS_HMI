@@ -43,9 +43,6 @@ CRC16 crc(CRC16_MODBUS_POLYNOME,
 
 uint8_t DGUS_SERIAL_ID = 0;
 
-// Helper for writing functions
-static void print_data(byte *data, int size);
-
 #if defined(ESP32)
 DWIN::DWIN(HardwareSerial &port, uint8_t receivePin, uint8_t transmitPin, long baud) {
   DGUS_port = &port;
@@ -156,6 +153,10 @@ bool DWIN::getGUIstatus_crc() {  // HEX(5A A5 06 83 0015 01 xx xx)
     return false;
   }
   
+  if (_echo) {
+    print_data(respBuffer, sizeof(respBuffer), false);
+  }
+  
   if (respBuffer[8] == 1) { // 0x0000=free, 0x0001=processing     
     return false;
   }
@@ -167,10 +168,10 @@ bool DWIN::getGUIstatus_crc() {  // HEX(5A A5 06 83 0015 01 xx xx)
 void DWIN::setTimeout_waitGUI(uint16_t timeout, bool enabled) {
   if (enabled) {
     _force_all_waitGUI_Timeout = true;
-  } else {
-    _force_all_waitGUI_Timeout = false;
     
     _waitGUI_Timeout = timeout;
+  } else {
+    _force_all_waitGUI_Timeout = false;
   }
 }
 
@@ -720,7 +721,43 @@ bool DWIN::setVP_crc(long address, uint16_t data) {
 
   return false;
 }
-      
+
+// Get 1 Word (16-bit) from VP Address (send order using CRC)
+int32_t DWIN::getVP_crc(long address) {
+  // CMD_HEAD1, CMD_HEAD2, lentgh, CMD_READ, address, address, crc, crc
+  byte sendBuffer[] = { CMD_HEAD1, CMD_HEAD2, 0x06, CMD_READ,
+                        (byte)((address >> 8) & 0xFF), (byte)((address) & 0xFF),
+                        0x01, 0x00, 0x00 };
+
+  calcCRC(sendBuffer, sizeof(sendBuffer), false);
+  
+  waitGUIstatusFree_crc();
+
+  _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
+
+  // delay(10);
+  
+  if (_echoSend) {
+    print_data(sendBuffer, sizeof(sendBuffer));
+  }
+  
+  // 5a a5 08 83 10 27 01 00 00 85 5f
+  const byte respConstBuff[] = { CMD_HEAD1, CMD_HEAD2, 0x08, CMD_READ, 0x10, 0x27, 0x01, 0x00, 0x00, 0x4A, 0x24 };
+  byte respBuffer[sizeof(respConstBuff)] = { 0 };
+  
+  if (readDWIN_array(respBuffer, sizeof(respBuffer)) == false) {
+    return false;
+  }
+  
+  if (_echo) {
+    print_data(respBuffer, sizeof(respBuffer), false);
+  }
+  
+  uint16_t ret = (respBuffer[7] << 8) | respBuffer[8];
+
+  return ret;
+}
+
 // set Multiple and Sequential Words (16-bit) on VP Address (send order using CRC)
 // Similar to writing text, this Words sending function can be useful for updating icon variables (Var Icon).
 bool DWIN::setMultSeqVP_crc(long address, uint16_t *data, int data_size) {
@@ -773,6 +810,60 @@ bool DWIN::setMultSeqVP_crc(long address, uint16_t *data, int data_size) {
   }
 
   return false;
+}
+
+// Get Multiple and Sequential Words (16-bit) on VP Address (send order using CRC)
+bool DWIN::getMultSeqVP_crc(long address, byte data_size, uint16_t *data) {
+  // CMD_HEAD1, CMD_HEAD2, lentgh, CMD_READ, address, address, crc, crc
+  
+  if (data_size > 0x7D) {
+    if (_echoSend) {
+      Serial.print(F("Fail: data_size > 0x7D; check DGUS2 'SP Order' tab limits"));
+    }
+    
+    return false;
+  }
+  
+  byte sendBuffer[] = { CMD_HEAD1, CMD_HEAD2, 0x06, CMD_READ,
+                        (byte)((address >> 8) & 0xFF), (byte)((address) & 0xFF),
+                        data_size, 0x00, 0x00 };
+
+  calcCRC(sendBuffer, sizeof(sendBuffer), false);
+  
+  waitGUIstatusFree_crc();
+
+  _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
+
+  // delay(10);
+    
+  if (_echoSend) {
+    print_data(sendBuffer, sizeof(sendBuffer));
+  }
+  
+  // '5a a5 0a 83 10 20 02' 00 01 00 02 'b7 1e'
+  byte respBuffer[9 + (data_size * 2)] = { 0 };
+  
+  if (readDWIN_array(respBuffer, sizeof(respBuffer)) == false) {
+    if (_echo) {
+      print_data(respBuffer, sizeof(respBuffer), false);
+    }
+    
+    return false;
+  }
+  
+  if (_echo) {
+    print_data(respBuffer, sizeof(respBuffer), false);
+  }
+  
+  int index = 7;
+  
+  for (int i = 0; i < data_size; i++) {
+    data[i] = (respBuffer[index] << 8) | respBuffer[index + 1];
+    
+    index += 2;
+  }
+  
+  return true;
 }
 
 // Beep Buzzer for 1 Sec
@@ -1074,8 +1165,17 @@ bool DWIN::calcCRC(uint8_t *array, uint16_t array_size, bool only_check) {
   return false;
 }
 
-static void print_data(byte *data, int size) {
-  Serial.print("Data sent --> ");
+void DWIN::print_data(byte *data, int size, bool is_send) {
+  
+  Serial.print(F("Data "));
+  
+  if (is_send) {
+    Serial.print(F("sent"));
+  } else {
+    Serial.print(F("received"));
+  }
+  
+  Serial.print(F(" --> "));
   
   for (int i = 0; i < size; i++) {
     if (data[i] <= 0x0F) Serial.print('0');
