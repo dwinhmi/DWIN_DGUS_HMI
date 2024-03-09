@@ -82,6 +82,9 @@ public:
   // Wait for GUI-status Free (send order using CRC)
   bool waitGUIstatusFree_crc(uint16_t timeout = 500);
 
+  // Set timeout for all Wait for GUI-status Free
+  void setTimeout_waitGUI(uint16_t timeout, bool enabled);
+
   // Restart HMI
   void restartHMI();
   // Restart HMI (send order using CRC)
@@ -99,9 +102,9 @@ public:
   bool setRTC_crc(byte year, byte month, byte day, byte week, byte hour, byte minute, byte second);
   
   // Set Particular Page
-  void setPage(byte pageID);
+  void setPage(uint16_t pageID);
   // Set Particular Page (send order using CRC)
-  bool setPage_crc(byte pageID);
+  bool setPage_crc(uint16_t pageID);
 
   // Get Current Page ID
   byte getPage();
@@ -167,15 +170,17 @@ private:
   SoftwareSerial* DGUS_port = nullptr;
 #endif
 
-  Stream* _dwinSerial;          // DWIN Serial interface
-  bool _isSoft = false;         // Is serial interface software
-  long _baud = 0;               // DWIN HMI Baud rate
-  bool _echo = false;           // Response Command Show
-  bool _echoSend = false;       // Send Command Show
-  bool _debug = false;          // Response Charactes Show
-  bool _isConnected = false;    // Flag set on successful communication
-  bool _wait = false;           // Flag Wait for the GUI to be free before sending the new Order (<300ms)
-  bool _verify = false;         // Flag Enable response checking for sent command
+  Stream* _dwinSerial;                    // DWIN Serial interface
+  bool _isSoft = false;                   // Is serial interface software
+  long _baud = 0;                         // DWIN HMI Baud rate
+  bool _echo = false;                     // Response Command Show
+  bool _echoSend = false;                 // Send Command Show
+  bool _debug = false;                    // Response Charactes Show
+  bool _isConnected = false;              // Flag set on successful communication
+  bool _wait = false;                     // Flag Wait for the GUI to be free before sending the new Order (<300ms)
+  bool _verify = false;                   // Flag Enable response checking for sent command
+  bool _force_all_waitGUI_Timeout = false; // Enable timeout for Wait for GUI-status Free
+  uint16_t _waitGUI_Timeout = 0;           // Timeout for Wait for GUI-status Free
 
   bool cbfunc_valid = false;
   hmiListener listenerCallback;
