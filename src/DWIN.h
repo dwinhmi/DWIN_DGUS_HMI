@@ -16,7 +16,6 @@
  * - - Thanks: RobTillaart from GitHub
  */
 
-
 #ifndef DWIN_H
 #define DWIN_H
 
