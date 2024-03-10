@@ -14,6 +14,10 @@
  * - - Or send apropriated command to enable CRC (UART2 of HMI)
  * - CRC is error control, to improve communication reliability
  * - - Thanks: RobTillaart from GitHub
+ * 
+ * Note: Check the Dwin display TX pin voltage (>3.3V?)
+ *       before connecting to the ESP32/ESP8266 RX (<3.3V)
+ * 
  */
 
 #include "DWIN.h"
@@ -49,7 +53,7 @@ DWIN::DWIN(HardwareSerial &port, uint8_t receivePin, uint8_t transmitPin, long b
   port.begin(baud, SERIAL_8N1, receivePin, transmitPin);
   init((Stream *)&port, false);
 }
-
+#warning Check the Dwin display TX pin voltage (>3.3V?) before connecting to the ESP32 RX (<3.3V)
 #elif defined(ESP8266)
 DWIN::DWIN(uint8_t receivePin, uint8_t transmitPin, long baud) {
   localSWserial = new SoftwareSerial(receivePin, transmitPin);
@@ -67,6 +71,7 @@ DWIN::DWIN(SoftwareSerial &port, long baud) {
 DWIN::DWIN(Stream &port, long baud) { 
   init(&port, true);
 }
+#warning Check the TX Dwin display pin voltage (>3.3V?) before connecting to the ESP8266 RX (<3.3V)
 
 #else
 DWIN::DWIN(uint8_t rx, uint8_t tx, long baud) {
