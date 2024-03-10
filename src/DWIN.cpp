@@ -138,6 +138,12 @@ bool DWIN::getGUIstatus_crc() {  // HEX(5A A5 06 83 0015 01 xx xx)
   
   calcCRC(sendBuffer, sizeof(sendBuffer), false);
   
+  if(clearSerialBuffer() == false) {
+    if (_echo) {
+      Serial.print(F("getGUIstatus_crc: Warning, has data in buffer before sending new Order"));
+    }
+  }
+  
   _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
   // delay(10);
   
@@ -297,6 +303,12 @@ int8_t DWIN::getBrightness_crc() {
   calcCRC(sendBuffer, sizeof(sendBuffer), false);
   
   waitGUIstatusFree_crc();
+  
+  if(clearSerialBuffer() == false) {
+    if (_echo) {
+      Serial.print(F("getBrightness_crc: Warning, has data in buffer before sending new Order"));
+    }
+  }
 
   _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
   
@@ -501,6 +513,12 @@ int8_t DWIN::getPage_crc() {
   calcCRC(sendBuffer, sizeof(sendBuffer), false);
   
   waitGUIstatusFree_crc();
+  
+  if(clearSerialBuffer() == false) {
+    if (_echo) {
+      Serial.print(F("getPage_crc: Warning, has data in buffer before sending new Order"));
+    }
+  }
 
   _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
 
@@ -732,6 +750,12 @@ int32_t DWIN::getVP_crc(long address) {
   calcCRC(sendBuffer, sizeof(sendBuffer), false);
   
   waitGUIstatusFree_crc();
+  
+  if(clearSerialBuffer() == false) {
+    if (_echo) {
+      Serial.print(F("getVP_crc: Warning, has data in buffer before sending new Order"));
+    }
+  }
 
   _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
 
@@ -831,6 +855,12 @@ bool DWIN::getMultSeqVP_crc(long address, byte data_size, uint16_t *data) {
   calcCRC(sendBuffer, sizeof(sendBuffer), false);
   
   waitGUIstatusFree_crc();
+  
+  if(clearSerialBuffer() == false) {
+    if (_echo) {
+      Serial.print(F("getMultSeqVP_crc: Warning, has data in buffer before sending new Order"));
+    }
+  }
 
   _dwinSerial->write(sendBuffer, sizeof(sendBuffer));
 
@@ -939,7 +969,32 @@ String DWIN::readDWIN() {
   return resp;
 }
 
+// Clear serial buffer before sending Order, to make it easier to synchronize data
+bool DWIN::clearSerialBuffer() {
+  unsigned long startTime = millis();  // Start time for Timeout
+  
+  while (((millis() - startTime) < READ_TIMEOUT_20)) {
+    if (_dwinSerial->available() > 0) {
+      (void)_dwinSerial->read();
+    } 
+  }
+  
+  if (_dwinSerial->available() > 0) {
+    return false;   
+  }
+  
+  return true;
+}
+
 // Read response from HMI, return bool and data via buffer pointer
+//
+// Note: The Dwin protocol only has a header and is 2 bytes,
+// to facilitate synchronization, empty the port's reception
+// buffer before sending the order (using clearSerialBuffer()),
+// to help avoid having too much data in the buffer
+
+bool CMD_HEAD1_found = false;
+
 bool DWIN::readDWIN_array(byte *c_buffer, int16_t c_size) {
   //* This has to only be enabled for Software serial
 #if defined(DWIN_SOFTSERIAL)
@@ -956,6 +1011,18 @@ bool DWIN::readDWIN_array(byte *c_buffer, int16_t c_size) {
   while (((millis() - startTime) < READ_TIMEOUT_20)) {
     if (_dwinSerial->available() > 0) {
       byte c = _dwinSerial->read();
+      
+      if (c == CMD_HEAD1) {
+        CMD_HEAD1_found = true;
+      } else if ((c == CMD_HEAD2) && (CMD_HEAD1_found == true)) {
+          c_buffer[0] = CMD_HEAD1;      
+          
+          index = 1;
+          
+          CMD_HEAD1_found = false;
+      } else {
+        CMD_HEAD1_found = false;
+      }
         
       if (index < c_size) {
         c_buffer[index] = c;
@@ -1008,7 +1075,7 @@ String DWIN::handle() {
       delay(10);
       int inhex = _dwinSerial->read();
       
-      if (inhex == 90 || inhex == 165) {
+      if (inhex == 90 || inhex == 165) { // 90:0x5A(CMD_HEAD1); 165:0xA5(CMD_HEAD2)
         isFirstByte = true;
         response.concat(checkHex(inhex) + " ");
         continue;
