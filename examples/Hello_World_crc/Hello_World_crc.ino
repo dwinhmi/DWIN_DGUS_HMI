@@ -33,6 +33,9 @@
  * - - Or send apropriated command to enable CRC (UART2 of HMI)
  * - CRC is error control, to improve communication reliability
  * - - Thanks: RobTillaart from GitHub
+ *
+ * Note: Check the Dwin display TX pin voltage (>3.3V?)
+ *       before connecting to the ESP32/ESP8266 RX (<3.3V)
  */
 
 #include <Arduino.h>
