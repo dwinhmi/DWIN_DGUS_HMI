@@ -194,6 +194,7 @@ private:
   void setDsBaudrate(uint32_t baud);
   byte readCMDLastByte();
   String readDWIN();
+  bool clearSerialBuffer();
   bool readDWIN_array(byte *c_buffer, int16_t c_size);
   String handle();
   String checkHex(byte currentNo);
