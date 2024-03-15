@@ -50,7 +50,7 @@ public:
 #elif defined(ESP8266)
   DWIN(uint8_t receivePin, uint8_t transmitPin, long baud = DWIN_DEFAULT_BAUD_RATE);
   DWIN(SoftwareSerial& port, long baud = DWIN_DEFAULT_BAUD_RATE);
-  DWIN(Stream& port, uint8_t long baud = DWIN_DEFAULT_BAUD_RATE);
+  DWIN(Stream& port, long baud = DWIN_DEFAULT_BAUD_RATE);
 
 // Using Arduino Board
 #else
